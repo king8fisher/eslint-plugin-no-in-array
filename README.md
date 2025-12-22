@@ -1,5 +1,7 @@
 # eslint-plugin-no-in-array
 
+[![npm version](https://img.shields.io/npm/v/eslint-plugin-no-in-array.svg)](https://www.npmjs.com/package/eslint-plugin-no-in-array)
+
 ESLint rule to disallow using the `in` operator with arrays. This is a **type-aware** rule that uses TypeScript's type checker to detect arrays, including those stored in variables.
 
 ## Why?
