@@ -1,0 +1,45 @@
+{
+  "name": "eslint-plugin-no-in-array",
+  "version": "1.0.0",
+  "description": "ESLint rule to disallow using the 'in' operator with arrays (type-aware)",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/king8fisher/eslint-plugin-no-in-array.git"
+  },
+  "scripts": {
+    "build": "tsup",
+    "prepublishOnly": "pnpm build",
+    "test": "vitest --run",
+    "test:watch": "vitest"
+  },
+  "keywords": [
+    "eslint",
+    "eslintplugin",
+    "eslint-plugin",
+    "typescript",
+    "array",
+    "in-operator"
+  ],
+  "author": "Anton Veretennikov (king8fisher)",
+  "license": "MIT",
+  "peerDependencies": {
+    "@typescript-eslint/utils": ">=6.0.0",
+    "eslint": ">=8.0.0"
+  },
+  "devDependencies": {
+    "@typescript-eslint/parser": "^8.50.1",
+    "@typescript-eslint/rule-tester": "^8.50.1",
+    "@typescript-eslint/utils": "^8.50.0",
+    "eslint": "^9.39.0",
+    "tsup": "^8.2.4",
+    "typescript": "^5.7.0",
+    "vitest": "^4.0.16"
+  },
+  "packageManager": "pnpm@10.26.1+sha512.664074abc367d2c9324fdc18037097ce0a8f126034160f709928e9e9f95d98714347044e5c3164d65bd5da6c59c6be362b107546292a8eecb7999196e5ce58fa"
+}
