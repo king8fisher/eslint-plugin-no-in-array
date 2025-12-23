@@ -11,7 +11,7 @@ Type-aware ESLint rule that catches `in` operator misuse with arrays.
 
 In Python/Kotlin, `in` checks if a value exists. In JS/TS, it checks property keys.
 
-```typescript
+```ts
 const arr = ["a", "b", "c"];
 
 "a" in arr;        // false - "a" is not an index
@@ -30,12 +30,12 @@ pnpm add -D eslint-plugin-no-in-array
 
 Requires type-checked linting.
 
-```javascript
+```ts
 // eslint.config.mjs
 import eslint from "@eslint/js";
 import { defineConfig } from "eslint/config";
 import tseslint from "typescript-eslint";
-import noInArrayPlugin from "eslint-plugin-no-in-array";
+import noInArray from "eslint-plugin-no-in-array";
 
 export default defineConfig(
   { ignores: ["dist/**", "node_modules/**"] },
@@ -45,23 +45,29 @@ export default defineConfig(
     extends: [
       tseslint.configs.recommended,
       tseslint.configs.recommendedTypeChecked,
+      noInArray.configs.recommended,
     ],
-    plugins: {
-      "no-in-array": noInArrayPlugin.default,
-    },
     languageOptions: {
       parserOptions: { projectService: true },
-    },
-    rules: {
-      "no-in-array/no-in-array": "warn",
     },
   }
 );
 ```
 
+Manual setup:
+
+```ts
+plugins: {
+  "no-in-array": noInArray,
+},
+rules: {
+  "no-in-array/check": "warn",
+},
+```
+
 ## Catches
 
-```typescript
+```ts
 "a" in arr;                   // warns
 "0" in tuple;                 // warns
 "x" in readonlyArr;           // warns
