@@ -2,74 +2,84 @@
 
 [![npm version](https://img.shields.io/npm/v/eslint-plugin-no-in-array.svg)](https://www.npmjs.com/package/eslint-plugin-no-in-array)
 
-ESLint rule to disallow using the `in` operator with arrays. This is a **type-aware** rule that uses TypeScript's type checker to detect arrays, including those stored in variables.
+Type-aware ESLint rule that catches `in` operator misuse with arrays.
 
-## Why?
+> [!NOTE]
+> Experiment in building type-aware ESLint rules. Dogfoods itself.
 
-The `in` operator checks for **property keys**, not values. This is a common source of bugs:
+## The problem
+
+In Python/Kotlin, `in` checks if a value exists. In JS/TS, it checks property keys.
 
 ```typescript
 const arr = ["a", "b", "c"];
 
-// WRONG - checks if "a" is a property key (index), not a value
-"a" in arr; // false (indices are "0", "1", "2")
-
-// CORRECT
+"a" in arr;        // false - "a" is not an index
 arr.includes("a"); // true
 ```
 
-## Installation
+Easy to forget, especially when switching languages.
+
+## Install
 
 ```bash
-npm install -D eslint-plugin-no-in-array
-# or
 pnpm add -D eslint-plugin-no-in-array
 ```
 
-## Usage
+## Config
 
-This rule requires **type-checked linting**. You need to configure your ESLint to use TypeScript's type information.
-
-### ESLint Flat Config (eslint.config.mjs)
+Requires type-checked linting.
 
 ```javascript
+// eslint.config.mjs
+import eslint from "@eslint/js";
+import { defineConfig } from "eslint/config";
+import tseslint from "typescript-eslint";
 import noInArrayPlugin from "eslint-plugin-no-in-array";
 
-export default [
+export default defineConfig(
+  { ignores: ["dist/**", "node_modules/**"] },
+  eslint.configs.recommended,
   {
     files: ["**/*.ts", "**/*.tsx"],
+    extends: [
+      tseslint.configs.recommended,
+      tseslint.configs.recommendedTypeChecked,
+    ],
     plugins: {
-      "no-in-array": noInArrayPlugin,
+      "no-in-array": noInArrayPlugin.default,
     },
     languageOptions: {
-      parserOptions: {
-        project: "./tsconfig.json",
-      },
+      parserOptions: { projectService: true },
     },
     rules: {
       "no-in-array/no-in-array": "warn",
     },
-  },
-];
+  }
+);
 ```
 
-## What it catches
+## Catches
 
 ```typescript
-const arr = ["a", "b", "c"];
-const tuple: [string, number] = ["hello", 42];
-const readonlyArr: readonly string[] = ["x", "y"];
+"a" in arr;                   // warns
+"0" in tuple;                 // warns
+"x" in readonlyArr;           // warns
+"foo" in ["inline", "array"]; // warns
 
-// All of these will warn:
-"a" in arr;
-"hello" in tuple;
-"x" in readonlyArr;
-"foo" in ["inline", "array"];
-
-// This will NOT warn (object, not array):
-const obj = { a: 1, b: 2 };
-"a" in obj; // OK - this is valid usage
+"a" in obj;                   // ok - objects are fine
 ```
+
+## Benchmarks
+
+| Test         | v1.0.0 | v1.1.0 | Change |
+| ------------ | ------ | ------ | ------ |
+| 100 objects  | 493 hz | 589 hz | +19%   |
+| 100 mixed    | 925 hz | 989 hz | +7%    |
+| 150 union    | 446 hz | 474 hz | +6%    |
+| 100 array in | 388 hz | 403 hz | +4%    |
+
+v1.1.0 optimizations: memoization, early primitive exit, union depth limit.
 
 ## License
 
