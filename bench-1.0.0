@@ -1,0 +1,18 @@
+ ✓ src/rules/no-in-array.bench.ts > no-in-array performance > array expressions 2581ms
+     name                      hz      min      max     mean      p75      p99     p995     p999     rme  samples
+   · 10 in-expressions   1,763.08   0.3893   6.8377   0.5672   0.4799   4.7565   4.8678   6.8377  ±7.41%      882
+   · 50 in-expressions     709.45   1.1046   6.2200   1.4095   1.2129   4.6669   5.0742   6.2200  ±5.97%      355
+   · 100 in-expressions    387.56   2.0320   9.8220   2.5802   2.2525   6.3203   9.8220   9.8220  ±6.29%      195
+   · 500 in-expressions   73.2098  10.8593  24.3149  13.6594  15.2482  24.3149  24.3149  24.3149  ±8.15%       37
+
+ ✓ src/rules/no-in-array.bench.ts > no-in-array performance > object expressions (no violations) 627ms
+     name                                   hz     min     max    mean     p75     p99    p995    p999     rme  samples
+   · 100 in-expressions (objects only)  493.42  1.6285  9.8448  2.0267  1.8087  4.2781  9.0666  9.8448  ±5.85%      248
+
+ ✓ src/rules/no-in-array.bench.ts > no-in-array performance > mixed expressions 612ms
+     name                            hz     min     max    mean     p75     p99    p995    p999     rme  samples
+   · 100 in-expressions (mixed)  924.50  0.8596  9.2585  1.0817  0.9221  3.8003  4.8898  9.2585  ±6.22%      463
+
+ ✓ src/rules/no-in-array.bench.ts > union types performance 626ms
+     name                               hz     min     max    mean     p75     p99    p995    p999     rme  samples
+   · 150 union type in-expressions  445.91  1.7617  7.1594  2.2426  2.0189  5.1928  5.6765  7.1594  ±5.76%      223

@@ -1,10 +1,18 @@
 {
   "name": "eslint-plugin-no-in-array",
-  "version": "1.0.1",
+  "version": "1.2.0",
+  "private": false,
   "description": "ESLint rule to disallow using the 'in' operator with arrays (type-aware)",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
   "files": [
     "dist"
   ],
@@ -16,7 +24,9 @@
     "build": "tsup",
     "prepublishOnly": "pnpm build",
     "test": "vitest --run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "bench": "vitest bench",
+    "lint": "eslint ."
   },
   "keywords": [
     "eslint",
@@ -33,12 +43,16 @@
     "eslint": ">=8.0.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.2",
+    "eslint": "^9.39.2",
+    "eslint-plugin-no-in-array": "^1.0.0",
+    "@types/node": "^25.0.3",
     "@typescript-eslint/parser": "^8.50.1",
     "@typescript-eslint/rule-tester": "^8.50.1",
-    "@typescript-eslint/utils": "^8.50.0",
-    "eslint": "^9.39.0",
-    "tsup": "^8.2.4",
-    "typescript": "^5.7.0",
+    "@typescript-eslint/utils": "^8.50.1",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.50.1",
     "vitest": "^4.0.16"
   },
   "packageManager": "pnpm@10.26.1+sha512.664074abc367d2c9324fdc18037097ce0a8f126034160f709928e9e9f95d98714347044e5c3164d65bd5da6c59c6be362b107546292a8eecb7999196e5ce58fa"

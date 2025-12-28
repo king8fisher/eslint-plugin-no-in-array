@@ -1,6 +1,7 @@
 # eslint-plugin-no-in-array
 
 [![npm version](https://img.shields.io/npm/v/eslint-plugin-no-in-array.svg)](https://www.npmjs.com/package/eslint-plugin-no-in-array)
+[![GitHub](https://img.shields.io/github/license/king8fisher/eslint-plugin-no-in-array)](https://github.com/king8fisher/eslint-plugin-no-in-array)
 
 ESLint rule to disallow using the `in` operator with arrays. This is a **type-aware** rule that uses TypeScript's type checker to detect arrays, including those stored in variables.
 
@@ -22,11 +23,11 @@ arr.includes("a"); // true
 
 This rule requires **type-checked linting**. Choose the setup that matches your project:
 
-- [Pure TypeScript Projects](#pure-typescript-projects)
-- [Next.js 16+](#nextjs-16)
+* [Pure TypeScript Projects](#pure-typescript-projects)
+* [Next.js 16+](#nextjs-16)
 
 > [!NOTE]
-> Both setups require `parserOptions.project` and `tsconfigRootDir` for type-aware linting. Without them, ESLint cannot access TypeScript's type checker and the rule will fail to load.
+> Both setups require type-aware linting via `projectService` (recommended) or `parserOptions.project`. Without this, ESLint cannot access TypeScript's type checker and the rule will fail to load.
 
 ### Pure TypeScript Projects
 
@@ -36,30 +37,58 @@ npm install -D eslint-plugin-no-in-array typescript-eslint
 pnpm add -D eslint-plugin-no-in-array typescript-eslint
 ```
 
+**Using the recommended config (simplest):**
+
 ```javascript
-import { dirname } from "path";
-import { fileURLToPath } from "url";
+import eslint from "@eslint/js";
+import { defineConfig } from "eslint/config";
 import tseslint from "typescript-eslint";
 import noInArray from "eslint-plugin-no-in-array";
 
-// Node 20.11+: use import.meta.dirname instead
-const __dirname = dirname(fileURLToPath(import.meta.url));
-
-export default tseslint.config(
-  ...tseslint.configs.recommended,
+export default defineConfig(
+  eslint.configs.recommended,
   {
     files: ["**/*.ts", "**/*.tsx"],
+    extends: [
+      tseslint.configs.recommended,
+      tseslint.configs.recommendedTypeChecked,
+      noInArray.configs.recommended,
+    ],
+    languageOptions: {
+      parserOptions: {
+        projectService: true,
+      },
+    },
+  },
+);
+```
+
+**Manual configuration:**
+
+```javascript
+import eslint from "@eslint/js";
+import { defineConfig } from "eslint/config";
+import tseslint from "typescript-eslint";
+import noInArray from "eslint-plugin-no-in-array";
+
+export default defineConfig(
+  eslint.configs.recommended,
+  {
+    files: ["**/*.ts", "**/*.tsx"],
+    extends: [
+      tseslint.configs.recommended,
+      tseslint.configs.recommendedTypeChecked,
+    ],
     plugins: {
       "no-in-array": noInArray,
     },
     languageOptions: {
       parserOptions: {
-        project: "./tsconfig.json",
-        tsconfigRootDir: __dirname,
+        projectService: true,
       },
     },
     rules: {
-      "no-in-array/no-in-array": "warn",
+      "no-in-array/check": "warn",
     },
   },
 );
@@ -91,22 +120,19 @@ export default defineConfig([
   ...nextTs,
   {
     files: ["**/*.ts", "**/*.tsx"],
-    plugins: {
-      "no-in-array": noInArray,
-    },
+    extends: [noInArray.configs.recommended],
     languageOptions: {
       parserOptions: {
         project: "./tsconfig.json",
         tsconfigRootDir: __dirname,
       },
     },
-    rules: {
-      "no-in-array/no-in-array": "warn",
-    },
   },
   globalIgnores([".next/**", "node_modules/**"]),
 ]);
 ```
+
+Or configure manually as outlined in [Pure TypeScript Projects](#pure-typescript-projects).
 
 ## What it catches
 
@@ -125,6 +151,17 @@ const readonlyArr: readonly string[] = ["x", "y"];
 const obj = { a: 1, b: 2 };
 "a" in obj; // OK - this is valid usage
 ```
+
+## Benchmarks
+
+| Test         | v1.0.0 | v1.1.0 | Change |
+| ------------ | ------ | ------ | ------ |
+| 100 objects  | 493 hz | 589 hz | +19%   |
+| 100 mixed    | 925 hz | 989 hz | +7%    |
+| 150 union    | 446 hz | 474 hz | +6%    |
+| 100 array in | 388 hz | 403 hz | +4%    |
+
+v1.1.0 optimizations: memoization, early primitive exit, union depth limit.
 
 ## License
 

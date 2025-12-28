@@ -1,6 +1,11 @@
 import { RuleTester } from "@typescript-eslint/rule-tester";
 import * as vitest from "vitest";
 import { noInArray } from "./no-in-array";
+import { fileURLToPath } from "node:url";
+import { dirname } from "node:path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 RuleTester.afterAll = vitest.afterAll;
 RuleTester.it = vitest.it;
