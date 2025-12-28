@@ -57,10 +57,10 @@ function createConfig(): Linter.Config[] {
         },
       },
       plugins: {
-        "no-in-array": { rules: { "no-in-array": noInArray } } as unknown as ESLint.Plugin,
+        "no-in-array": { rules: { check: noInArray } } as unknown as ESLint.Plugin,
       },
       rules: {
-        "no-in-array/no-in-array": "error",
+        "no-in-array/check": "error",
       },
     },
   ];
