@@ -18,7 +18,56 @@ const arr = ["a", "b", "c"];
 arr.includes("a"); // true
 ```
 
-## Installation
+## Installation & Setup
+
+This rule requires **type-checked linting**. Choose the setup that matches your project:
+
+- [Pure TypeScript Projects](#pure-typescript-projects)
+- [Next.js 16+](#nextjs-16)
+
+> [!NOTE]
+> Both setups require `parserOptions.project` and `tsconfigRootDir` for type-aware linting. Without them, ESLint cannot access TypeScript's type checker and the rule will fail to load.
+
+### Pure TypeScript Projects
+
+```bash
+npm install -D eslint-plugin-no-in-array typescript-eslint
+# or
+pnpm add -D eslint-plugin-no-in-array typescript-eslint
+```
+
+```javascript
+import { dirname } from "path";
+import { fileURLToPath } from "url";
+import tseslint from "typescript-eslint";
+import noInArray from "eslint-plugin-no-in-array";
+
+// Node 20.11+: use import.meta.dirname instead
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+export default tseslint.config(
+  ...tseslint.configs.recommended,
+  {
+    files: ["**/*.ts", "**/*.tsx"],
+    plugins: {
+      "no-in-array": noInArray,
+    },
+    languageOptions: {
+      parserOptions: {
+        project: "./tsconfig.json",
+        tsconfigRootDir: __dirname,
+      },
+    },
+    rules: {
+      "no-in-array/no-in-array": "warn",
+    },
+  },
+);
+```
+
+### Next.js 16+
+
+`eslint-config-next` already includes `typescript-eslint`, so you don't need to install it separately.
 
 ```bash
 npm install -D eslint-plugin-no-in-array
@@ -26,31 +75,37 @@ npm install -D eslint-plugin-no-in-array
 pnpm add -D eslint-plugin-no-in-array
 ```
 
-## Usage
-
-This rule requires **type-checked linting**. You need to configure your ESLint to use TypeScript's type information.
-
-### ESLint Flat Config (eslint.config.mjs)
-
 ```javascript
-import noInArrayPlugin from "eslint-plugin-no-in-array";
+import { dirname } from "path";
+import { fileURLToPath } from "url";
+import { defineConfig, globalIgnores } from "eslint/config";
+import nextVitals from "eslint-config-next/core-web-vitals";
+import nextTs from "eslint-config-next/typescript";
+import noInArray from "eslint-plugin-no-in-array";
 
-export default [
+// Node 20.11+: use import.meta.dirname instead
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+export default defineConfig([
+  ...nextVitals,
+  ...nextTs,
   {
     files: ["**/*.ts", "**/*.tsx"],
     plugins: {
-      "no-in-array": noInArrayPlugin,
+      "no-in-array": noInArray,
     },
     languageOptions: {
       parserOptions: {
         project: "./tsconfig.json",
+        tsconfigRootDir: __dirname,
       },
     },
     rules: {
       "no-in-array/no-in-array": "warn",
     },
   },
-];
+  globalIgnores([".next/**", "node_modules/**"]),
+]);
 ```
 
 ## What it catches
