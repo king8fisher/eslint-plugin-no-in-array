@@ -1,10 +1,11 @@
 import { noInArray } from "./rules/no-in-array";
 import type { TSESLint } from "@typescript-eslint/utils";
+import { name, version } from "../package.json";
 
 const plugin = {
   meta: {
-    name: "eslint-plugin-no-in-array",
-    version: "1.1.0",
+    name,
+    version,
   },
   rules: {
     check: noInArray,
